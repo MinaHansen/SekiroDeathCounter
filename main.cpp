@@ -3,8 +3,9 @@
 #include "ProcGetter.h"
 #include "ProcReader.h"
 #include "DeathCounter.h"
+#include "overlay.h"
 
-int main() {
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     const char disclaimer[] = "###########################################################################\n"
                               "This program is not extensively tested and may not work as expected.\n"
                               "Source: https://github.com/SakuraKade/SekiroDeathCounter\n"
@@ -18,17 +19,36 @@ int main() {
     const char module_name[] = "sekiro.exe";
 
     HANDLE process_handle = ProcGetter::getProcHandle(process_name);
+    if (process_handle == nullptr) {
+        std::cerr << "Failed to get process handle." << std::endl;
+        return -1;
+    }
+
     auto proc_reader = ProcReader(process_handle, module_name);
-    auto death_counter = DeathCounter(&proc_reader, [](int death_count) {
+
+    // Start overlay
+    std::cout << "Starting overlay..." << std::endl;
+
+    auto overlay = Overlay(hInstance);
+    overlay.show();
+
+    std::cout << "Overlay started." << std::endl;
+    auto death_counter = DeathCounter(&proc_reader, [&overlay](int death_count) {
         std::cout << "Deaths: " << death_count << std::endl;
+        overlay.update(death_count);
     });
 
-    death_counter.start();
-    std::cout << "Death counter started." << std::endl;
 
-    // Wait forever until the user closes the program
-    while (true) {
-        Sleep(1000);
+    std::thread death_counter_thread([&death_counter]() {
+        while (true) {
+            death_counter.tick();
+        }
+    });
+
+    MSG msg;
+    while (GetMessage(&msg, nullptr, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
     }
 
     CloseHandle(process_handle);

@@ -3,11 +3,8 @@ project(SekiroDeathCounter)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(SekiroDeathCounter main.cpp
-        ProcReader.cpp
-        ProcReader.h
-        ProcReader.h
-        ProcGetter.cpp
-        ProcGetter.h
+add_executable(SekiroDeathCounter WIN32 main.cpp
         DeathCounter.cpp
-        DeathCounter.h)
+        Overlay.cpp
+        ProcGetter.cpp
+        ProcReader.cpp)

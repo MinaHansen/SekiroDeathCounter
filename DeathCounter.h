@@ -15,17 +15,13 @@ private:
 
     ProcReader* proc_reader;
     std::function<void(int)> death_callback;
-    std::thread* thread{};
 
-    volatile bool is_running = false;
     int death_count = 0;
-
-    void run();
+    int last_health = 0;
 
 public:
     DeathCounter(ProcReader* proc_reader, std::function<void(int)> death_callback);
-    void start();
-    void stop();
+    int tick();
 };
 
 
