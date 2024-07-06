@@ -1,0 +1,3 @@
+/mnt/c/Users/Sakura/CLionProjects/SekiroDeathCounter/linux/cmake-build-debug/CMakeFiles/SekiroDeathCounter.dir
+/mnt/c/Users/Sakura/CLionProjects/SekiroDeathCounter/linux/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Sakura/CLionProjects/SekiroDeathCounter/linux/cmake-build-debug/CMakeFiles/rebuild_cache.dir

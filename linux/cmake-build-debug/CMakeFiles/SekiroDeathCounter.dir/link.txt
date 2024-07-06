@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/SekiroDeathCounter.dir/main.cpp.o -o SekiroDeathCounter
