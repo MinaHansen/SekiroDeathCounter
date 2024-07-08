@@ -24,7 +24,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         return -1;
     }
 
-    auto proc_reader = ProcReader(process_handle, module_name);
+    auto proc_reader = ProcReader(process_handle, process_name, module_name);
 
     // Start overlay
     std::cout << "Starting overlay..." << std::endl;
@@ -42,6 +42,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     std::thread death_counter_thread([&death_counter]() {
         while (true) {
             death_counter.tick();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     });
 

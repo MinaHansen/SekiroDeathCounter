@@ -3,20 +3,37 @@
 //
 
 #include "ProcReader.h"
+#include "ProcGetter.h"
 
-ProcReader::ProcReader(HANDLE hProc, const char *modName) {
+ProcReader::ProcReader(HANDLE hProc, const char* procName, const char *modName) {
+    this->procName = procName;
     this->hProc = hProc;
     this->moduleBase = getModuleBaseAddress(modName);
 }
 
-void ProcReader::readMemoryOffset(unsigned char *array, const int offset, const int size) {
+bool ProcReader::readMemoryOffset(unsigned char *array, const int offset, const int size) {
+    if (!isRunning()) {
+        // Try to get the process handle again
+        hProc = ProcGetter::getProcHandle(procName);
+        if (hProc == nullptr) {
+            return false;
+        }
+    }
+
     ReadProcessMemory(hProc, (LPCVOID) (moduleBase + offset), array, size, nullptr);
 }
 
-int ProcReader::readMemoryOffset(int offset) {
-    int buffer;
-    ReadProcessMemory(hProc, (LPCVOID) (moduleBase + offset), &buffer, sizeof(buffer), nullptr);
-    return buffer;
+bool ProcReader::readMemoryOffset(int* value,int offset) {
+    if (!isRunning()) {
+        // Try to get the process handle again
+        hProc = ProcGetter::getProcHandle(procName);
+        if (hProc == nullptr) {
+            return false;
+        }
+    }
+
+    ReadProcessMemory(hProc, (LPCVOID) (moduleBase + offset), &value, sizeof(*value), nullptr);
+    return value != nullptr;
 }
 
 uintptr_t ProcReader::getModuleBaseAddress(const char *modName) {

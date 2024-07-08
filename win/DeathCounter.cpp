@@ -20,12 +20,16 @@ int DeathCounter::tick() {
         return -1;
     }
 
-    int current_health = proc_reader->readMemoryOffset(health_memory_offset);
+    int current_health = 0;
+    if (proc_reader->readMemoryOffset(&current_health, health_memory_offset)) {
+        std::cerr << "Failed to read memory." << std::endl;
+        return -1;
+    }
+
     if (current_health <= 0 && last_health > 0) {
         death_count++;
         death_callback(death_count);
     }
     last_health = current_health;
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     return 0;
 }
